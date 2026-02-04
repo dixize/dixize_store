@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ULTRA PREMIUM STORE</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-[#050505] text-white selection:bg-indigo-500/30">
+
+    <header class="fixed top-0 w-full z-[100] border-b border-white/5 bg-black/80 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-12">
+                <a href="#" class="text-2xl font-black tracking-tighter italic">ULTRA<span class="text-indigo-500 italic">S.</span></a>
+                <nav class="hidden lg:flex gap-8 text-sm font-medium text-gray-400">
+                    <button onclick="filter('All')" class="hover:text-white transition">Каталог</button>
+                    <button onclick="filter('New')" class="hover:text-white transition">Новинки</button>
+                    <button class="hover:text-white transition">О нас</button>
+                </nav>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <div class="relative group hidden sm:block">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                    <input type="text" id="searchInput" oninput="search()" placeholder="Поиск девайсов..." 
+                        class="bg-white/5 border border-white/10 rounded-full py-2.5 pl-11 pr-6 text-sm focus:w-80 transition-all outline-none focus:border-indigo-500">
+                </div>
+                <button onclick="toggleWishlist()" class="relative text-gray-400 hover:text-red-500 transition">
+                    <i class="fa-regular fa-heart text-xl"></i>
+                    <span id="wish-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+                <button onclick="toggleCart()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-full flex items-center gap-3 transition shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span id="cart-total-price-nav">0 ₽</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="pt-32 pb-20 px-4 text-center overflow-hidden">
+        <div class="max-w-4xl mx-auto relative">
+            <div class="absolute -top-20 -left-20 w-64 h-64 bg-indigo-600/20 blur-[120px] rounded-full"></div>
+            <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tight">UPGRADE <br><span class="text-indigo-500">YOUR SYSTEM</span></h1>
+            <p class="text-gray-400 text-lg max-w-xl mx-auto mb-10">Премиальные технологии и аксессуары с доставкой. Прямая интеграция с логистикой через Telegram.</p>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+                <select id="sortSelect" onchange="sortItems()" class="bg-white/5 border border-white/10 px-6 py-3 rounded-xl outline-none text-sm">
+                    <option value="default">По умолчанию</option>
+                    <option value="cheap">Сначала дешевле</option>
+                    <option value="expensive">Сначала дороже</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 pb-40">
+        <div id="catalog" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="skeleton-card h-80 rounded-3xl bg-white/5 animate-pulse"></div>
+            <div class="skeleton-card h-80 rounded-3xl bg-white/5 animate-pulse"></div>
+            <div class="skeleton-card h-80 rounded-3xl bg-white/5 animate-pulse"></div>
+            <div class="skeleton-card h-80 rounded-3xl bg-white/5 animate-pulse"></div>
+        </div>
+    </main>
+
+    <div id="product-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeProductModal()"></div>
+        <div class="relative bg-[#111] w-full max-w-5xl rounded-[40px] overflow-hidden flex flex-col md:flex-row shadow-2xl border border-white/10">
+            <button onclick="closeProductModal()" class="absolute top-6 right-6 text-white/50 hover:text-white text-3xl z-10">&times;</button>
+            <div id="modal-img" class="md:w-1/2 h-80 md:h-auto bg-center bg-cover"></div>
+            <div class="md:w-1/2 p-10 flex flex-col justify-center">
+                <span id="modal-category" class="text-indigo-500 font-bold tracking-widest text-xs uppercase mb-2"></span>
+                <h2 id="modal-title" class="text-4xl font-bold mb-4"></h2>
+                <p id="modal-desc" class="text-gray-400 leading-relaxed mb-8"></p>
+                <div class="flex items-center gap-6">
+                    <span id="modal-price" class="text-3xl font-black"></span>
+                    <button id="modal-add-btn" class="flex-grow bg-white text-black py-4 rounded-2xl font-bold hover:bg-indigo-500 hover:text-white transition">Добавить в корзину</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full max-w-md bg-[#0a0a0a] border-l border-white/10 z-[150] translate-x-full transition-transform duration-500 p-8 flex flex-col">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl font-bold">Ваш заказ</h2>
+            <button onclick="toggleCart()" class="text-3xl">&times;</button>
+        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto space-y-4 pr-2 custom-scroll"></div>
+        <div class="pt-8 border-t border-white/10">
+            <div class="flex justify-between text-xl font-bold mb-6">
+                <span>Итого:</span>
+                <span id="cart-total-price">0 ₽</span>
+            </div>
+            <div class="space-y-3">
+                <input type="text" id="order-name" placeholder="Имя Фамилия" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-indigo-500">
+                <input type="tel" id="order-phone" placeholder="+7 (___) ___-__-__" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-indigo-500">
+                <button onclick="checkout()" class="w-full bg-indigo-600 py-5 rounded-2xl font-bold text-lg hover:shadow-[0_0_30px_rgba(79,70,229,0.4)] transition">ПОДТВЕРДИТЬ ЗАКАЗ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
